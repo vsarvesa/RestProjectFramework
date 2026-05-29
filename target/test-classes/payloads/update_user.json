@@ -1,0 +1,13 @@
+{
+  "firstName": "Updated Name",
+  "lastName": "Updated Surname",
+  "age": 30,
+  "role": "USER",
+  "address": {
+    "street": "456 Updated Ave",
+    "city": "Los Angeles",
+    "state": "CA",
+    "zipCode": "90001",
+    "country": "US"
+  }
+}

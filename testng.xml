@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+
+<!--
+    TestNG Suite Configuration
+    ==========================
+    parallel="methods"  → Each @Test method runs in its own thread
+    thread-count="5"    → Maximum 5 concurrent threads
+    data-provider-thread-count="3" → Max threads for @DataProvider
+
+    LISTENERS (registered order matters):
+    ======================================
+    1. RetryListener             → Applies RetryAnalyzer to ALL tests (no per-@Test annotation needed)
+    2. FrameworkLoggingListener  → All lifecycle logging — test start/pass/fail/skip/suite banners
+    3. FrameworkSetupListener    → DB connection pool teardown after suite completes
+    4. AllureTestNg              → Allure report integration
+-->
+<suite name="REST Assured API Test Suite"
+       verbose="1">
+
+    <listeners>
+        <!-- Retry: auto-applies RetryAnalyzer to every @Test method -->
+        <listener class-name="com.framework.retry.RetryListener"/>
+
+        <!-- Logging: all lifecycle events logged internally — no logger in test classes -->
+        <listener class-name="com.framework.logging.FrameworkLoggingListener"/>
+
+        <!-- Setup: DB pool teardown after suite, without code in BaseTest -->
+        <listener class-name="com.framework.listeners.FrameworkSetupListener"/>
+
+        <!-- Allure: captures steps, attachments, and result metadata -->
+        <listener class-name="io.qameta.allure.testng.AllureTestNg"/>
+    </listeners>
+
+    <!-- ==================== TEST GROUPS ==================== -->
+    <test name="API Tests" preserve-order="false">
+        <packages>
+            <package name="com.framework.tests"/>
+        </packages>
+    </test>
+
+</suite>

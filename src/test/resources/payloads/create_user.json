@@ -1,0 +1,18 @@
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "age": 25,
+  "role": "USER",
+  "address": {
+    "street": "123 Main Street",
+    "city": "New York",
+    "state": "NY",
+    "zipCode": "10001",
+    "country": "US"
+  },
+  "preferences": {
+    "notifications": true,
+    "newsletter": false
+  }
+}

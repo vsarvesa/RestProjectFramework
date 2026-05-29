@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Log4j2 Configuration
+    ====================
+    - Console appender for local development
+    - Rolling file appender for CI/CD
+    - Thread name included in every log line (critical for parallel runs)
+    - Sensitive fields (passwords, tokens) are NOT logged at INFO level
+-->
+<Configuration status="WARN" monitorInterval="30">
+
+    <Properties>
+        <!-- Log output directory -->
+        <Property name="LOG_DIR">target/logs</Property>
+
+        <!--
+            Pattern:
+            [timestamp] [LEVEL] [ThreadName] ClassName.methodName(line) - message
+        -->
+        <Property name="LOG_PATTERN">
+            %d{yyyy-MM-dd HH:mm:ss.SSS} [%-5level] [%t] [%X{traceId}] %logger{36}.%M(%L) - %msg%n
+        </Property>
+    </Properties>
+
+    <Appenders>
+
+        <!-- Console Appender — colorized output for local runs -->
+        <Console name="ConsoleAppender" target="SYSTEM_OUT">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+
+        <!-- Rolling File Appender — keeps last 7 days / 100MB per file -->
+        <RollingFile name="FileAppender"
+                     fileName="${LOG_DIR}/framework.log"
+                     filePattern="${LOG_DIR}/framework-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="100MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="7"/>
+        </RollingFile>
+
+        <!-- Separate file for API request/response details (DEBUG level) -->
+        <RollingFile name="ApiLogAppender"
+                     fileName="${LOG_DIR}/api-calls.log"
+                     filePattern="${LOG_DIR}/api-calls-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+            <Policies>
+                <TimeBasedTriggeringPolicy interval="1" modulate="true"/>
+                <SizeBasedTriggeringPolicy size="50MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="5"/>
+        </RollingFile>
+
+    </Appenders>
+
+    <Loggers>
+
+        <!-- Framework root logger -->
+        <Logger name="com.framework" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- API request/response logger — goes to dedicated file -->
+        <Logger name="com.framework.request" level="DEBUG" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="ApiLogAppender"/>
+        </Logger>
+
+        <!-- REST Assured internal logging — INFO only to avoid noise -->
+        <Logger name="io.restassured" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+        </Logger>
+
+        <!-- HikariCP connection pool logging -->
+        <Logger name="com.zaxxer.hikari" level="INFO" additivity="false">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+        </Logger>
+
+        <!-- Root logger — catch-all -->
+        <Root level="INFO">
+            <AppenderRef ref="ConsoleAppender"/>
+            <AppenderRef ref="FileAppender"/>
+        </Root>
+
+    </Loggers>
+
+</Configuration>
