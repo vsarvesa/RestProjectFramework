@@ -3,7 +3,7 @@
 A production-grade API test automation framework built with:
 - **Java 21** (Amazon Corretto 21)
 - **Maven** build tool
-- **TestNG 7.9** test runner + parallel execution
+- **TestNG 7.9** test runner
 - **REST Assured 5.4** HTTP client
 - **OAuth 2.0** authentication (client_credentials + password grants)
 - **Allure 2.27** reporting
